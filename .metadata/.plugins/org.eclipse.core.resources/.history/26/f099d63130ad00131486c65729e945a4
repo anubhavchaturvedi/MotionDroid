@@ -1,0 +1,78 @@
+import java.awt.AWTException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.Socket;
+import java.util.Scanner;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+
+
+public class MotionDroid_Client{
+
+	private final static String SERVER_IP = "192.168.1.4";
+	private final static int SERVER_PORT = 6000;
+	
+	private static Socket socket;
+
+	
+	private static final double SCALING_FACTOR=5;
+	
+	public static void main(String args[]) throws IOException, JSONException, AWTException
+	{
+		MotionHandler handler = new MotionHandler();
+		
+		socket = new Socket(SERVER_IP, SERVER_PORT);
+
+		System.out.println("Application started");
+		
+		InputStream inputStream = socket.getInputStream();
+		Scanner scan = new Scanner(inputStream);
+		
+		/*
+		BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+		FileWriter fw = new FileWriter(new File("data"));
+		
+		long startCurrentTime = System.currentTimeMillis();
+		*/
+		
+		
+		while(true)
+		{
+			/*
+			fw.write(br.readLine());
+			System.out.println(br.readLine());
+			
+			if( (System.currentTimeMillis() - startCurrentTime) >= (10 * 1000) )
+				break;
+			*/
+			
+			
+			
+			JSONArray array = new JSONArray(scan.nextLine());
+			
+			JSONObject record = array.getJSONObject(1);
+			//JSONObject values = record.getJSONObject("linear_acceleration");
+			JSONObject values = record.getJSONObject("accelerometer");
+			
+			int deltaTimeMillis = 1; // milliseconds
+			
+			int deltaX = (int) (0.5*(values.getDouble("x"))*(Math.pow(deltaTimeMillis, 2) * SCALING_FACTOR ));
+			int deltaY = (int) (0.5*(values.getDouble("y"))*(Math.pow(deltaTimeMillis, 2) * SCALING_FACTOR ));
+			
+			//handler.relativeMove(deltaX, deltaY);
+			System.out.println("("+deltaX+" , "+deltaY+")");
+			
+		}
+		
+		/*
+		br.close();
+		fw.close();
+		
+		*/
+		//socket.close();
+		
+	}
+}

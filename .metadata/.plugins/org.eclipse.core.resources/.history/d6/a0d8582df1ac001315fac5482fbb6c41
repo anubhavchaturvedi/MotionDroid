@@ -1,0 +1,60 @@
+import java.io.IOException;
+import java.util.Arrays;
+
+import javax.bluetooth.BluetoothStateException;
+import javax.bluetooth.DeviceClass;
+import javax.bluetooth.DiscoveryAgent;
+import javax.bluetooth.DiscoveryListener;
+import javax.bluetooth.LocalDevice;
+import javax.bluetooth.RemoteDevice;
+import javax.bluetooth.ServiceRecord;
+
+
+public class BluetoothClient{
+
+	LocalDevice localDevice = null;
+	
+	public BluetoothClient() throws BluetoothStateException {
+	
+		localDevice = LocalDevice.getLocalDevice();
+		DiscoveryAgent agent = localDevice.getDiscoveryAgent();
+		
+		agent.startInquiry(DiscoveryAgent.LIAC,new DiscoveryListener() {
+			
+			@Override
+			public void servicesDiscovered(int arg0, ServiceRecord[] arg1) {
+				System.out.println(Arrays.deepToString(arg1));
+			}
+			
+			@Override
+			public void serviceSearchCompleted(int arg0, int arg1) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void inquiryCompleted(int arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void deviceDiscovered(RemoteDevice arg0, DeviceClass arg1) {
+				// TODO Auto-generated method stub
+				try {
+					System.out.println("deviceDiscovered:\nRemote device: "+arg0.getFriendlyName(false)+"\n"
+							+"Device Class : "+arg1+"\n\n");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		
+	}
+	
+	public static void main(String args[]) throws BluetoothStateException
+	{
+		BluetoothClient obj = new BluetoothClient();
+	}
+}

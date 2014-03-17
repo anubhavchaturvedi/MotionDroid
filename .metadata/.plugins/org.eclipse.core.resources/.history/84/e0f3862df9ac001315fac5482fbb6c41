@@ -1,0 +1,32 @@
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.util.Scanner;
+
+
+
+public class MotionDroid_Client{
+
+	private final static String SERVER_IP = "10.20.8.75";
+	private final static int SERVER_PORT = 6589;
+	
+	private static Socket socket;
+	
+	
+	public static void main(String args[]) throws IOException
+	{
+		InetAddress serverAddr = InetAddress.getByName(SERVER_IP);
+		socket = new Socket(serverAddr, SERVER_PORT);
+
+		InputStream inputStram = socket.getInputStream();
+		
+		Scanner scan = new Scanner(inputStram);
+		
+		while(scan.hasNext())
+		{
+			System.out.println(scan.nextLine());
+		}
+		
+	}
+}

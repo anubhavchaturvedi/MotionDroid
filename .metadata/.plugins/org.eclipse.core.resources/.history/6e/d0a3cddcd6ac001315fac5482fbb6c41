@@ -1,0 +1,137 @@
+package com.example.motiodroid;
+
+import android.app.Activity;
+import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.os.Bundle;
+import android.widget.TextView;
+
+public class MainActivity extends Activity implements SensorEventListener {
+
+	private TextView dataAccelerometer;
+	private TextView dataGravity;
+	private TextView dataGyroscope;
+	private TextView dataLinearAcceleration;
+	private TextView dataRotationVector;
+	
+	
+	SensorManager mSensorManager;
+	Sensor accelerometer, gravity, gyroscope, linear_acceleration, rotation;
+	
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        
+        dataAccelerometer = (TextView) findViewById(R.id.data_accelerometer);
+        dataGravity = (TextView) findViewById(R.id.data_gravity);
+        dataGyroscope = (TextView) findViewById(R.id.data_gyroscope);
+        dataLinearAcceleration = (TextView) findViewById(R.id.data_linear_acceleration);
+        dataRotationVector = (TextView) findViewById(R.id.data_rotation_vector);
+        
+        sense();
+    }
+    
+    public void sense()
+    {
+    	mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+    	
+    	accelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+    	gravity = mSensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
+    	gyroscope = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE_UNCALIBRATED);
+    	linear_acceleration = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
+    	rotation = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+    	
+    	//mSensorManager.registerListener(this, accelerometer, 0);
+    	mSensorManager.registerListener(this, gravity, 0);
+    	mSensorManager.registerListener(this, gyroscope, 0);
+    	mSensorManager.registerListener(this, linear_acceleration, 0);
+    	mSensorManager.registerListener(this, rotation, 0);
+    }
+    
+    @Override
+    public void onSensorChanged(SensorEvent event){
+    	//if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
+    	//{
+    		//dataAccelerometer.setText(parseAccelerometer(event));
+    	//}
+    	if(event.sensor.getType() == Sensor.TYPE_GRAVITY)
+    	{
+    		dataGravity.setText(parseGravity(event));
+    	}
+    	if(event.sensor.getType() == Sensor.TYPE_GYROSCOPE_UNCALIBRATED)
+    	{
+    		dataGyroscope.setText(parseGyroscope(event));
+    	}
+    	if(event.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION)
+    	{
+    		dataLinearAcceleration.setText(parseLinearAcceleration(event));
+    	}
+    	if(event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR)
+    	{
+    		dataRotationVector.setText(parseRotationVector(event));
+    	}
+    }
+    
+    private String parseAccelerometer(SensorEvent event)
+    {
+    	float[] values=event.values;
+    	
+    	return "Accelerometer Sensor:\n"
+			+ "x-axis : "+values[0]+"\n"
+			+ "y-axis : "+values[1]+"\n"
+			+ "z-axis : "+values[2];
+    }
+
+    private String parseGravity(SensorEvent event)
+    {
+    	float values[]=event.values;
+    	
+    	return "Gravity Sensor:\n"
+    			+ "x-axis : "+values[0]+"\n"
+    			+ "y-axis : "+values[1]+"\n"
+    			+ "z-axis : "+values[2];
+    }
+    
+    private String parseGyroscope(SensorEvent event)
+    {
+    	float values[]=event.values;
+    	
+    	return "Gyroscope Sensor:\n"
+    			+ "x-axis : "+values[0]+"\n"
+    			+ "y-axis : "+values[1]+"\n"
+    			+ "z-axis : "+values[2];
+    }
+    
+    private String parseLinearAcceleration(SensorEvent event)
+    {
+    	float values[]=event.values;
+    	
+    	return "Linear Acceleration Sensor:\n"
+    			+ "x-axis : "+values[0]+"\n"
+    			+ "y-axis : "+values[1]+"\n"
+    			+ "z-axis : "+values[2];
+    }
+    
+    private String parseRotationVector(SensorEvent event)
+    {
+    	float values[]=event.values;
+    	
+    	return "Rotation Sensor:\n"
+    			+ "x-axis : "+values[0]+"\n"
+    			+ "y-axis : "+values[1]+"\n"
+    			+ "z-axis : "+values[2]+"\n"
+    			+ "scalar component : " + values[3];
+    }
+    
+    
+	@Override
+	public void onAccuracyChanged(Sensor sensor, int accuracy) {
+		// TODO Auto-generated method stub
+		
+	}
+    
+}

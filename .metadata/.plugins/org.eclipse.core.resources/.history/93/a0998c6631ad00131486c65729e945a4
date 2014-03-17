@@ -1,0 +1,46 @@
+import java.awt.AWTException;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Robot;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+
+public class MotionHandlerTester {
+
+	private static final double SCALING_FACTOR=1.5;
+	
+	public static void main(String args[]) throws FileNotFoundException, JSONException, AWTException
+	{
+		Robot obj = new Robot();
+		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+		int RESOLUTION_X = gd.getDisplayMode().getWidth();
+		int RESOLUTION_Y = gd.getDisplayMode().getHeight();
+		
+		obj.mouseMove(0, 0);
+		System.exit(0);
+		
+		MotionHandler handler = new MotionHandler();
+		
+		Scanner scan = new Scanner(new File("data"));
+		while(scan.hasNext())
+		{
+			JSONArray array = new JSONArray(scan.nextLine());
+			
+			JSONObject record = array.getJSONObject(0);
+			JSONObject values = record.getJSONObject("linear_acceleration");
+			
+			int deltaTimeMillis = 1; // milliseconds
+			
+			int deltaX = (int) (0.5*(values.getDouble("x"))*(Math.pow(deltaTimeMillis, 2) * SCALING_FACTOR ));
+			int deltaY = (int) (0.5*(values.getDouble("y"))*(Math.pow(deltaTimeMillis, 2) * SCALING_FACTOR ));
+			
+			handler.relativeMove(deltaX, deltaY);			
+		}
+	}
+}

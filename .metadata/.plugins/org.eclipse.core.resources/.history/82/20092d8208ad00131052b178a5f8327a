@@ -1,0 +1,22 @@
+import java.awt.AWTException;
+import java.awt.Robot;
+
+
+public class MotionHandler {
+
+	private Robot robot;
+	private final int SCALING_FACTOR=1;
+	private int x,y;
+	
+	
+	public MotionHandler() throws AWTException {
+	
+		robot = new Robot();
+		x= robot.mouseMove(500, 500);
+	}
+	
+	public void move(float x, float y)
+	{
+		robot.mouseMove(x, y);
+	}
+}

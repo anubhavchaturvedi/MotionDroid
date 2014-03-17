@@ -1,0 +1,34 @@
+import java.awt.AWTException;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Robot;
+
+
+public class MotionHandler {
+
+	private Robot robot;
+	private int x,y;
+	
+	private int RESOLUTION_X = 1024;
+	private int RESOLUTION_Y = 1024;
+	
+	public MotionHandler() throws AWTException {
+	
+		robot = new Robot();
+		x= 500;
+		y=500;
+		robot.mouseMove(x, y);
+		
+		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+		int RESOLUTION_X = gd.getDisplayMode().getWidth();
+		int RESOLUTION_Y = gd.getDisplayMode().getHeight();
+	}
+	
+	public void relativeMove(int x, int y)
+	{
+		this.x+=x;
+		this.y+=y;
+		robot.mouseMove(this.x, this.y);
+		System.out.println("("+x+" , "+y+")");
+	}
+}

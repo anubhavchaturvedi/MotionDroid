@@ -1,0 +1,112 @@
+package com.example.motiodroid;
+
+import java.io.IOException;
+import java.util.UUID;
+
+import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothServerSocket;
+import android.bluetooth.BluetoothSocket;
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
+public class BluetoothConnection extends Activity {
+
+	private BluetoothAdapter bluetooth;
+	private BluetoothSocket socket;
+	private UUID uuid = UUID.fromString("a60f35f0-b93a-11de-8a39-08002009c666");
+
+	private static int DISCOVERY_REQUEST = 1;
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.main);
+
+		// Get the Bluetooth Adapter
+		configureBluetooth();
+
+		// Setup the ListView of discovered devices
+		setupListView();
+
+		// Setup search button
+		setupSearchButton();
+
+		// Setup listen button
+		setupListenButton();
+	}
+
+	private void configureBluetooth() {
+		bluetooth = BluetoothAdapter.getDefaultAdapter();
+	}
+
+	private void switchUI() {
+		final TextView messageText = (TextView) findViewById(R.id.text_messages);
+		final EditText textEntry = (EditText) findViewById(R.id.text_message);
+		messageText.setVisibility(View.VISIBLE);
+		list.setVisibility(View.GONE);
+		textEntry.setEnabled(true);
+	}
+
+	private void setupListenButton() {
+		Button listenButton = (Button) findViewById(R.id.button_listen);
+		listenButton.setOnClickListener(new OnClickListener() {
+			public void onClick(View view) {
+				Intent disc;
+				disc = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+				startActivityForResult(disc, DISCOVERY_REQUEST);
+			}
+		});
+	}
+
+	private void setupListView() {
+	}
+
+	private void setupSearchButton() {
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == DISCOVERY_REQUEST) {
+			boolean isDiscoverable = resultCode > 0;
+			if (isDiscoverable) {
+				String name = "bluetoothserver";
+				try {
+					final BluetoothServerSocket btserver =
+							bluetooth.listenUsingRfcommWithServiceRecord(name, uuid);
+					AsyncTask<Integer, Void, BluetoothSocket> acceptThread =
+							new AsyncTask<Integer, Void, BluetoothSocket>() {
+						
+						@Override
+						protected BluetoothSocket doInBackground(Integer... params) {
+
+							try {
+								socket = btserver.accept(params[0]*1000);
+								return socket;
+							} catch (IOException e) {
+								Log.d("BLUETOOTH", e.getMessage());
+							}
+							return null;
+						}
+						@Override
+						protected void onPostExecute(BluetoothSocket result) {
+							if (result != null)
+								switchUI();
+						}
+						
+					};
+					acceptThread.execute(resultCode);
+				} catch (IOException e) {
+					Log.d("BLUETOOTH", e.getMessage());
+				}
+			}
+		}
+	}
+}

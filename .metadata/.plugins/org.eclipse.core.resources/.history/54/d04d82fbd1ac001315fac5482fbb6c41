@@ -1,0 +1,69 @@
+package com.example.motiodroid;
+
+import android.app.Activity;
+import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.os.Bundle;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class MainActivity extends Activity implements SensorEventListener {
+
+	private TextView data;
+	private String dataString;
+	
+	SensorManager mSensorManager;
+	Sensor accelerometer, gravity, gyroscope, linear_acceleration, rotation;
+	
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        
+        data = (TextView) findViewById(R.id.data);
+        dataString="";
+        sense();
+    }
+    
+    public void sense()
+    {
+    	mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+    	
+    	accelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+    	gravity = mSensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
+    	gyroscope = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE_UNCALIBRATED);
+    	linear_acceleration = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
+    	rotation = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+    	
+    }
+    
+    @Override
+    public void onSensorChanged(SensorEvent event){
+    	if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
+    	{
+    		data.setText(parseAccelerometer(event));
+    	}
+    }
+    
+    private String parseAccelerometer(SensorEvent event)
+    {
+    	float[] values=event.values;
+    	
+    	float x=values[0];
+    	float y=values[1];
+    	float z=values[2];
+    	
+    	Toast.makeText(this, "Accelerometer data\nx= "+x+"\ny= "+y+"\nz= "+z+"\n\n", Toast.LENGTH_SHORT).show();
+    	return "Accelerometer data\nx= "+x+"\ny= "+y+"\nz= "+z+"\n\n";
+    }
+
+	@Override
+	public void onAccuracyChanged(Sensor sensor, int accuracy) {
+		// TODO Auto-generated method stub
+		
+	}
+    
+}

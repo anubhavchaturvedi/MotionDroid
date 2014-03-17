@@ -1,0 +1,76 @@
+import java.awt.AWTException;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.Socket;
+import java.util.Arrays;
+import java.util.Scanner;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+
+
+public class MotionDroid_Client{
+
+	private final static String SERVER_IP = "192.168.1.4";
+	private final static int SERVER_PORT = 6000;
+	
+	private static Socket socket;
+
+	static enum SourceSensor{
+		linear_acceleration, accelerometer
+	}
+		
+	public static void main(String args[]) throws IOException, JSONException, AWTException
+	{
+		System.out.println(Arrays.deepToString(args));
+		
+		SourceSensor source = SourceSensor.accelerometer;
+		
+		MotionHandler handler = new MotionHandler();
+		
+		socket = new Socket(SERVER_IP, SERVER_PORT);
+
+		System.out.println("Application started");
+		
+		InputStream inputStream = socket.getInputStream();
+		
+		InputStreamReader inStreamReader = new InputStreamReader(inputStream);
+		BufferedReader br = new BufferedReader(inStreamReader);
+		
+		String line;
+		
+		while(!(line = br.readLine()).equals("end"))
+		{
+			JSONArray array = new JSONArray(br.readLine());
+			
+			JSONObject record,values;
+									
+			int deltaX=0,deltaY=0;
+			
+			if( source == SourceSensor.accelerometer )
+			{
+				record = array.getJSONObject(1);
+				values = record.getJSONObject("accelerometer");
+				
+				// transformation of received values
+				deltaX = (int) ((-1*values.getDouble("x")-1)*(0.9));
+				deltaY = (int) ((values.getDouble("y")-1)*0.9);
+			}
+			else if( source == SourceSensor.linear_acceleration )
+			{
+				record = array.getJSONObject(0);
+				values = record.getJSONObject("linear_acceleration");
+				
+				// linear transformation of received values
+				deltaX = (int) ((-1*values.getDouble("x")-1)*(0.9));
+				deltaY = (int) ((values.getDouble("y")-1)*0.9);
+			}
+			
+			handler.relativeMove(deltaX, deltaY);
+		}
+	}
+}

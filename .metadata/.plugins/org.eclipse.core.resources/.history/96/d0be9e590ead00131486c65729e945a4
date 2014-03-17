@@ -1,0 +1,36 @@
+import java.awt.AWTException;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+
+public class MotionHandlerTester {
+
+	private static final double SCALING_FACTOR=0.5;
+	
+	public static void main(String args[]) throws FileNotFoundException, JSONException, AWTException
+	{
+		
+		MotionHandler handler = new MotionHandler();
+		
+		Scanner scan = new Scanner(new File("data"));
+		while(scan.hasNext())
+		{
+			JSONArray array = new JSONArray(scan.nextLine());
+			//[{"linear_acceleration":{"x" : 0.0,"y" : -0.0,"z" : 0.1}}]
+			
+			JSONObject record = array.getJSONObject(0);
+			JSONObject values = record.getJSONObject("linear_acceleration");
+			
+			int deltaTimeMillis = 1; // milliseconds
+			
+			int deltaX = 0.5*(values.getDouble("x"))*(Math.pow(deltaTimeMillis, b))
+			
+			handler.relativeMove( (int)(values.getDouble("x") * SCALING_FACTOR), (int)(values.getDouble("y") * SCALING_FACTOR));			
+		}
+	}
+}

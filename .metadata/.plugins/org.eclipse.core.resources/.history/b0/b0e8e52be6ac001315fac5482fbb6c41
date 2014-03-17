@@ -1,0 +1,57 @@
+package com.example.motiodroid;
+
+import java.util.UUID;
+
+import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothSocket;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
+
+public class BluetoothConnection extends Activity {
+
+	private BluetoothAdapter bluetooth;
+	private BluetoothSocket socket;
+	private UUID uuid = UUID.fromString("a60f35f0-b93a-11de-8a39-08002009c666");
+	
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.main);
+		
+		// Get the Bluetooth Adapter
+		configureBluetooth();
+		
+		// Setup the ListView of discovered devices
+		setupListView();
+		
+		// Setup search button
+		setupSearchButton();
+		
+		// Setup listen button
+		setupListenButton();
+	}
+
+	private void configureBluetooth() {
+		bluetooth = BluetoothAdapter.getDefaultAdapter();
+	}
+	
+	private void switchUI() {
+		final TextView messageText = (TextView)findViewById(R.id.text_messages);
+		final EditText textEntry = (EditText)findViewById(R.id.text_message);
+		messageText.setVisibility(View.VISIBLE);
+		list.setVisibility(View.GONE);
+		textEntry.setEnabled(true);
+	}
+
+	private void setupListenButton() {
+	}
+
+	private void setupListView() {
+	}
+
+	private void setupSearchButton() {
+	}
+}
